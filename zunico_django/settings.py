@@ -162,13 +162,13 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 CORS_ALLOWED_ORIGINS = [
-"https://mechdocreact.vercel.app",
+"https://zunicoreact.vercel.app",
     "http://localhost:5173",
 
 
 ]
 CSRF_TRUSTED_ORIGINS = [
-    "https://mechdocreact.vercel.app",
+    "https://zunicoreact.vercel.app"
     "http://localhost:5173",
 "http://localhost:8000",
     "https://mechdocdjango.onrender.com"
