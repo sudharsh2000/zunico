@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'zunico_django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 import os
-import dj_databse_url
+
 
 DATABASES = {
     'default': {
