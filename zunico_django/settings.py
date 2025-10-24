@@ -99,7 +99,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'zunico_db'),
         'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'yourpassword'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', '123'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
@@ -171,6 +171,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://zunicoreact.vercel.app",
     "http://localhost:5173",
 "http://localhost:8000",
+    'https://zunico.onrender.com'
 
 ]
 # Cookies
