@@ -53,20 +53,12 @@ class LoginView(APIView):
         refresh['username']=user.username
         print('refresh-tok',refresh)
         response=Response({'access_token': str(refresh.access_token),'message': 'Successfully logged in.'})
-        response.set_cookie(
-            key='cookie2', value=str('jfsjhjfhsjhfjhsjhfjhsjh'),
-            samesite='None',
-            httponly=True,
-            secure=False,
 
-            max_age=7 * 24 * 60 * 60
-
-        )
         response.set_cookie(
             key='refresh', value=str(refresh),
             samesite='Lax',
-            httponly=True,
-            secure=False,
+            httponly=False,
+            secure=True,
 
             max_age=7*24*60*60
 
