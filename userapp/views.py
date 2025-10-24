@@ -56,7 +56,7 @@ class LoginView(APIView):
 
         response.set_cookie(
             key='refresh', value=str(refresh),
-            samesite='Lax',
+            samesite='None',
             httponly=False,
             secure=True,
 
