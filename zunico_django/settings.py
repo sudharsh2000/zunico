@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 from dotenv import load_dotenv
 load_dotenv()
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-temp-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -112,7 +112,7 @@ import os
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'zunico_db'),
+        'NAME': os.environ.get('DB_NAME', 'zunicodb'),
         'USER': os.environ.get('DB_USER', 'postgres'),
         'PASSWORD': os.environ.get('DB_PASSWORD', '123'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
