@@ -31,16 +31,29 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-temp-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['zunico.onrender.com', 'localhost', '127.0.0.1']
 
 
 
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
+)
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
+DEFAULT_FILE_STORAGE= 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # Application definition
 
 INSTALLED_APPS = [
+'cloudinary',
+    'cloudinary_storage',
     'userapp',
     'productapp',
     'rest_framework',
@@ -56,17 +69,14 @@ INSTALLED_APPS = [
 ]
 
 
-INSTALLED_APPS += [
-    'cloudinary',
-    'cloudinary_storage',
-]
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-}
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+import os
+print("Cloud Name:", os.getenv("CLOUDINARY_CLOUD_NAME"))
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -195,7 +205,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CSRF_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SAMESITE = "None"
+
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
@@ -205,11 +215,16 @@ SESSION_COOKIE_SECURE = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# MEDIA_URL = 'media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+
+
