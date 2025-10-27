@@ -216,6 +216,11 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+from django.core.files.storage import storages
+import cloudinary_storage.storage
+
+storages._storages.clear()
+storages._storages['default'] = cloudinary_storage.storage.MediaCloudinaryStorage()
 
 
 # Default primary key field type
