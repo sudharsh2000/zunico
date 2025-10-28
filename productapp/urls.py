@@ -19,14 +19,14 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from productapp.views import productimage,products,productcategories
+from productapp.views import productimage, products, productcategories, Cart
 
 from zunico_django import settings
 
 router = routers.DefaultRouter()
 router.register('categories',productcategories, basename='productcategory')
 router.register('products',products ,basename='products')
-
+router.register('cart',Cart ,basename='cart')
 urlpatterns = [
 
 

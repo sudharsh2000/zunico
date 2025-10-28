@@ -7,8 +7,8 @@ from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from productapp.Serializers import ProductSerializer, ProductCategorySerializer
-from productapp.models import Products,Productcategory,productimage
+from productapp.Serializers import ProductSerializer, ProductCategorySerializer, CartItemSerializer, CartSerializer
+from productapp.models import Products, Productcategory, productimage, CartItem, Cart
 
 
 # Create your views here.
@@ -22,7 +22,7 @@ class products(viewsets.ModelViewSet):
 
 
 
-    search_fields = ['name','description','price']
+    search_fields = ['name','description','price','category__name']
 
 class productcategories(viewsets.ModelViewSet):
 
@@ -31,3 +31,6 @@ class productcategories(viewsets.ModelViewSet):
     serializer_class = ProductCategorySerializer
 class ProductImages(viewsets.ModelViewSet):
     queryset = productimage.objects.all()
+class Cart(viewsets.ModelViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
