@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Sum
 from rest_framework import serializers
 
 from productapp.models import Products, Productcategory, productimage, Cart, CartItem
@@ -29,12 +30,50 @@ class ProductCategorySerializer(serializers.ModelSerializer):
         model = Productcategory
         fields = '__all__'
 class CartItemSerializer(serializers.ModelSerializer):
+    Product = ProductSerializer(read_only=True)
+    Product_id=serializers.PrimaryKeyRelatedField(queryset=Products.objects.all(), write_only=True,source='Product')
+
+
     class Meta:
         model = CartItem
-        fields = '__all__'
+        fields = ['id','Product','Product_id', 'quantity','price','total_price','discount']
+        extra_kwargs = {
+            'cart': {'read_only': True}
+        }
 class CartSerializer(serializers.ModelSerializer):
     items = CartItemSerializer(many=True)
 
+
     class Meta:
         model = Cart
-        fields = ['id','user','items']
+        fields = ['id','items','total_price','user','total_discount','final_price']
+    def create(self, validated_data):
+        items = validated_data.pop('items')
+        user=validated_data.get('user')
+        cart,created = Cart.objects.get_or_create(user=user)
+
+        for item in items:
+
+
+
+            Product=item['Product']
+            print(Product.id)
+
+            quantity=item.get('quantity')
+            price=item.get('price')
+            total_price=item.get('total_price')
+            products=Products.objects.get(id=Product.id)
+            olditem=CartItem.objects.filter(cart=cart, Product=Product).first()
+            if olditem:
+
+                olditem.quantity +=quantity
+                olditem.total_price=olditem.price* olditem.quantity
+                olditem.discount=(products.discount*100)/olditem.total_price
+                olditem.save()
+            else:
+
+                CartItem.objects.create(cart=cart, **item)
+                Cart.save()
+        return cart
+
+

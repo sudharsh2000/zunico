@@ -31,6 +31,11 @@ class productcategories(viewsets.ModelViewSet):
     serializer_class = ProductCategorySerializer
 class ProductImages(viewsets.ModelViewSet):
     queryset = productimage.objects.all()
-class Cart(viewsets.ModelViewSet):
+class CartViewset(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['id', 'user']
+class CartitemsViewset(viewsets.ModelViewSet):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
