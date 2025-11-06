@@ -1,7 +1,7 @@
 from django.db.models.aggregates import Sum
 from rest_framework import serializers
 
-from productapp.models import Products, Productcategory, productimage, Cart, CartItem
+from productapp.models import Products, Productcategory, productimage, Cart, CartItem, Address
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -77,3 +77,7 @@ class CartSerializer(serializers.ModelSerializer):
         return cart
 
 
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = '__all__'

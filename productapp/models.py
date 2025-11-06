@@ -86,7 +86,7 @@ class Address(models.Model):
     city = models.CharField(max_length=100)
     district = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100)
-    country = models.CharField(max_length=100, default='India')
+
     pincode = models.CharField(max_length=10)
 
     address_type = models.CharField(
