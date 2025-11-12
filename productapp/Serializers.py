@@ -1,7 +1,8 @@
 from django.db.models.aggregates import Sum
 from rest_framework import serializers
 
-from productapp.models import Products, Productcategory, productimage, Cart, CartItem, Address
+from productapp.models import Products, Productcategory, productimage, Cart, CartItem, Address, OrderItem, Payment, \
+    Order
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -36,10 +37,12 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ['id','Product','Product_id', 'quantity','price','total_price','discount']
+        fields = ['id','Product','Product_id', 'quantity','price','total_price','discount','added_at','updated_at']
         extra_kwargs = {
             'cart': {'read_only': True}
         }
+
+
 class CartSerializer(serializers.ModelSerializer):
     items = CartItemSerializer(many=True)
 
@@ -47,6 +50,12 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ['id','items','total_price','user','total_discount','final_price']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Order items descending by added_at
+        data['items'] = sorted(data['items'], key=lambda i: i['added_at'], reverse=True)
+        return data
     def create(self, validated_data):
         items = validated_data.pop('items')
         user=validated_data.get('user')
@@ -76,8 +85,43 @@ class CartSerializer(serializers.ModelSerializer):
                 Cart.save()
         return cart
 
-
+    def get_items(self, obj):
+        items = obj.items.all().order_by('-updated_at')
+        return CartItemSerializer(items, many=True).data
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = '__all__'
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'
+        extra_kwargs = {
+            'order': {'read_only': True}
+        }
+class OrderItemsSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    product_id = serializers.PrimaryKeyRelatedField(queryset=Products.objects.all(), write_only=True, source='product')
+    class Meta:
+        model=OrderItem
+        fields=['id','product','quantity','price','total_price','product_id','order']
+        extra_kwargs = {
+            "order": {"read_only": True}
+        }
+class OrderSerializer(serializers.ModelSerializer):
+    order_items=OrderItemsSerializer(many=True)
+    payment=PaymentSerializer()
+
+    class Meta:
+        model = Order
+        fields = ['id','order_items','payment', 'total_amount','user','total_discount','payment_status','payment_method','order_status']
+    def create(self, validated_data):
+        order_items=validated_data.pop('order_items')
+        payment=validated_data.pop('payment')
+        order=Order.objects.create(**validated_data)
+        print(payment)
+
+        Payment.objects.create(**payment,order=order)
+        for order_item in order_items:
+            OrderItem.objects.create(order=order, **order_item)
+        return order

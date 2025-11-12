@@ -113,13 +113,13 @@ class Order(models.Model):
     order_status = models.CharField(max_length=20, default='Processing')
     created_at = models.DateTimeField(auto_now_add=True)
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    product = models.ForeignKey(Products, on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
+    product = models.ForeignKey(Products, on_delete=models.SET_NULL, null=True,related_name='Product')
     quantity = models.IntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
 class Payment(models.Model):
-    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE,related_name='payment')
     payment_id = models.CharField(max_length=100, null=True, blank=True)
     payment_status = models.CharField(max_length=50, default='Pending')
     payment_mode = models.CharField(max_length=50, default='COD')

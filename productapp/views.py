@@ -1,3 +1,4 @@
+from django.db.models import Max
 from django.shortcuts import render
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -8,8 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from productapp.Serializers import ProductSerializer, ProductCategorySerializer, CartItemSerializer, CartSerializer, \
-    AddressSerializer
-from productapp.models import Products, Productcategory, productimage, CartItem, Cart, Address
+    AddressSerializer, OrderSerializer, OrderItemsSerializer
+from productapp.models import Products, Productcategory, productimage, CartItem, Cart, Address, Order, OrderItem
 
 
 # Create your views here.
@@ -34,10 +35,19 @@ class productcategories(viewsets.ModelViewSet):
 class ProductImages(viewsets.ModelViewSet):
     queryset = productimage.objects.all()
 class CartViewset(viewsets.ModelViewSet):
-    queryset = Cart.objects.all()
     serializer_class = CartSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user']
+    ordering_fields = ['user', 'latest_item_added']
+    ordering = ['-latest_item_added']
+
+    def get_queryset(self):
+        return (
+            Cart.objects
+            .annotate(latest_item_added=Max('items__updated_at'))
+            .distinct()
+        )
+
 class CartitemsViewset(viewsets.ModelViewSet):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
@@ -46,3 +56,9 @@ class AddressViewset(viewsets.ModelViewSet):
     serializer_class = AddressSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['id', 'user']
+class OrderItemViewset(viewsets.ModelViewSet):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemsSerializer
+class OrderViewset(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer

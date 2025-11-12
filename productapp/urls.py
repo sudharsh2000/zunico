@@ -19,7 +19,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from productapp.views import productimage, products, productcategories, CartViewset, CartitemsViewset, AddressViewset
+from productapp.views import productimage, products, productcategories, CartViewset, CartitemsViewset, AddressViewset, \
+    OrderViewset, OrderItemViewset
 
 from zunico_django import settings
 
@@ -29,6 +30,8 @@ router.register('products',products ,basename='products')
 router.register('cart',CartViewset ,basename='cart')
 router.register('cartitem',CartitemsViewset ,basename='cartitem')
 router.register('addAdress',AddressViewset ,basename='addAdress')
+router.register('orders',OrderViewset ,basename='orders')
+router.register('orderitems',OrderItemViewset ,basename='orderitems')
 urlpatterns = [
 
 
