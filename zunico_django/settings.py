@@ -76,6 +76,12 @@ import os
 print("Cloud Name:", os.getenv("CLOUDINARY_CLOUD_NAME"))
 
 
+testkeyid=''
+testkeysecret=''
+import os
+
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
 
 
 MIDDLEWARE = [
@@ -188,18 +194,18 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 CORS_ALLOWED_ORIGINS = [
-"https://zunicoreact.vercel.app",
+"https://wisedecore.vercel.app",
     "http://localhost:5173",
 "https://localhost:5173",
 
 
 ]
 CSRF_TRUSTED_ORIGINS = [
-    "https://zunicoreact.vercel.app",
+    "https://wisedecore.vercel.app",
     "http://localhost:5173",
 "http://localhost:5173",
 "http://localhost:8000",
-    'https://zunico.onrender.com'
+    'https://wisedecore.onrender.com'
 
 ]
 # Cookies
