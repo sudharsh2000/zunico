@@ -70,6 +70,8 @@ class AddressViewset(viewsets.ModelViewSet):
 class OrderItemViewset(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemsSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['id', 'Product_id', 'quantity']
 # class OrderViewset(viewsets.ModelViewSet):
 #     queryset = Order.objects.all()
 #     serializer_class = OrderSerializer
@@ -112,6 +114,9 @@ class OrderItemViewset(viewsets.ModelViewSet):
 class OrderViewset(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['id', 'user','order_status']
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -180,3 +185,11 @@ class VerifyPayment(APIView):
             return Response({"status": "success"})
         except Exception as e:
             return Response({"status": "failed", "message": str(e)}, status=400)
+class DeleteDraftOrder(APIView):
+    def delete(self, request):
+        user = request.GET.get("user")
+        status = request.GET.get("order_status")
+        print(user,status)
+        Order.objects.filter(user=user, order_status=status).delete()
+
+        return Response({"msg": "Draft order deleted"})

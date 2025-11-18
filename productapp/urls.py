@@ -20,7 +20,7 @@ from django.urls import path, include
 from rest_framework import routers
 
 from productapp.views import productimage, products, productcategories, CartViewset, CartitemsViewset, AddressViewset, \
-    OrderViewset, OrderItemViewset,VerifyPayment
+    OrderViewset, OrderItemViewset, VerifyPayment, DeleteDraftOrder
 
 from zunico_django import settings
 
@@ -38,6 +38,7 @@ urlpatterns = [
 
     path('api/', include(router.urls)),
     path('api/payment/verify',VerifyPayment.as_view(),name='verify'),
+    path('api/orders/delete-draft', DeleteDraftOrder.as_view(),name='delete_draft_order'),
 
 
 ]

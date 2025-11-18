@@ -100,11 +100,11 @@ class PaymentSerializer(serializers.ModelSerializer):
             'order': {'read_only': True}
         }
 class OrderItemsSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True)
-    product_id = serializers.PrimaryKeyRelatedField(queryset=Products.objects.all(), write_only=True, source='product')
+    Product = ProductSerializer(read_only=True)
+    Product_id = serializers.PrimaryKeyRelatedField(queryset=Products.objects.all(), write_only=True, source='Product')
     class Meta:
         model=OrderItem
-        fields=['id','product','quantity','price','total_price','product_id','order']
+        fields=['id','Product','quantity','price','total_price','Product_id','order']
         extra_kwargs = {
             "order": {"read_only": True}
         }
