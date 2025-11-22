@@ -51,6 +51,7 @@ class LoginView(APIView):
             return Response({'message': 'Invalid username or password.'}, status=401)
         refresh=RefreshToken.for_user(user)
         refresh['username']=user.username
+        refresh['superuser']=user.is_superuser
         print('refresh-tok',refresh)
         response=Response({'access_token': str(refresh.access_token),'message': 'Successfully logged in.'})
 
