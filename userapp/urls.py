@@ -36,6 +36,7 @@ path('',views.home,name='home'),
 path('signin',views.LoginView.as_view(),name='signin'),
 path('Refresh/',views.RefreshTokenview.as_view(),name='Refresh'),
 path('logout/',views.LogoutView.as_view(),name='logout'),
+path('create-admin',views.create_admin,name='create_admin'),
     path('api/', include(router.urls)),
 
 ]

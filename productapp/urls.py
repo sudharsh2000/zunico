@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
+
 from productapp.views import productimage, products, productcategories, CartViewset, CartitemsViewset, AddressViewset, \
     OrderViewset, OrderItemViewset, VerifyPayment, DeleteDraftOrder
 
@@ -39,6 +40,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/payment/verify',VerifyPayment.as_view(),name='verify'),
     path('api/orders/delete-draft', DeleteDraftOrder.as_view(),name='delete_draft_order'),
+
 
 
 ]

@@ -14,9 +14,22 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from userapp.Serializers import UserSerializer, BannersSerializer
 from userapp.models import User, Banners
 
-
+from django.contrib.auth import get_user_model
 def home(request):
     return HttpResponse("Hello, world. You're at the polls page.")
+
+
+def create_admin(req):
+    User = get_user_model()
+    username = "developer"
+    email = "developer@example.com"
+    password = "123"
+
+    if not User.objects.filter(username=username).exists():
+        User.objects.create_superuser(username, email, password)
+        return HttpResponse('Superuser created!')
+    else:
+         return HttpResponse("Superuser already exists!")
 # Create your views here.
 class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
