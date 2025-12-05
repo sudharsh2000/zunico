@@ -19,9 +19,9 @@ from zunico_django import settings
 
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 from productapp.Serializers import ProductSerializer, ProductCategorySerializer, CartItemSerializer, CartSerializer, \
-    AddressSerializer, OrderSerializer, OrderItemsSerializer
+    AddressSerializer, OrderSerializer, OrderItemsSerializer, WishlistSerializer
 from productapp.models import Products, Productcategory, productimage, CartItem, Cart, Address, Order, OrderItem, \
-    Payment
+    Payment, Wishlist
 
 
 # Create your views here.
@@ -46,6 +46,7 @@ class productcategories(viewsets.ModelViewSet):
 class ProductImages(viewsets.ModelViewSet):
     queryset = productimage.objects.all()
 class CartViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     serializer_class = CartSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user']
@@ -60,58 +61,24 @@ class CartViewset(viewsets.ModelViewSet):
         )
 
 class CartitemsViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
 class AddressViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['id', 'user']
 class OrderItemViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemsSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['id', 'Product_id', 'quantity']
-# class OrderViewset(viewsets.ModelViewSet):
-#     queryset = Order.objects.all()
-#     serializer_class = OrderSerializer
-#
-#
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def create_razorpay_order(request):
-#     try:
-#         user = request.user
-#         order_id = request.data.get("order_id")  # your Order model ID
-#         order = Order.objects.get(id=order_id, user=user)
-#
-#         amount_paise = int(order.total_amount * 100)  # Razorpay uses paise
-#
-#         # Create Razorpay order
-#         razorpay_order = client.order.create({
-#             "amount": amount_paise,
-#             "currency": "INR",
-#             "receipt": f"order_rcpt_{order.id}",
-#             "payment_capture": 1
-#         })
-#
-#         # Update your Payment model
-#         payment, created = Payment.objects.get_or_create(order=order)
-#         payment.payment_mode = "ONLINE"
-#         payment.payment_status = "Created"
-#         payment.payment_id = razorpay_order["id"]
-#         payment.save()
-#
-#         return Response({
-#             "key": settings.RAZORPAY_KEY_ID,
-#             "order_id": razorpay_order["id"],
-#             "amount": amount_paise,
-#             "currency": "INR"
-#         })
-#
-#     except Order.DoesNotExist:
-#         return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+
 class OrderViewset(viewsets.ModelViewSet):
+
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -193,3 +160,9 @@ class DeleteDraftOrder(APIView):
         Order.objects.filter(user=user, order_status=status).delete()
 
         return Response({"msg": "Draft order deleted"})
+class WishlistViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Wishlist.objects.all()
+    serializer_class = WishlistSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['id', 'user','Product_id',]

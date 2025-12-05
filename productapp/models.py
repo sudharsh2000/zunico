@@ -129,3 +129,13 @@ class Payment(models.Model):
     payment_mode = models.CharField(max_length=50, default='COD')
     created_at = models.DateTimeField(auto_now_add=True)
 
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    Product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'Product')  # prevent duplicates
+
+    def __str__(self):
+        return f"{self.user.username} - {self.Product.name}"

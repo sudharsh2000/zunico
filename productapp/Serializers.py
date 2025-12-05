@@ -2,7 +2,9 @@ from django.db.models.aggregates import Sum
 from rest_framework import serializers
 
 from productapp.models import Products, Productcategory, productimage, Cart, CartItem, Address, OrderItem, Payment, \
-    Order
+    Order, Wishlist
+from userapp.Serializers import UserSerializer
+from userapp.models import User
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -110,11 +112,13 @@ class OrderItemsSerializer(serializers.ModelSerializer):
         }
 class OrderSerializer(serializers.ModelSerializer):
     order_items=OrderItemsSerializer(many=True)
+    user=UserSerializer(read_only=True)
+    user_id=serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True, source='user')
     payment=PaymentSerializer()
 
     class Meta:
         model = Order
-        fields = ['id','order_items','payment', 'total_amount','user','total_discount','payment_status','payment_method','order_status']
+        fields = ['id','order_items','payment', 'total_amount','user','user_id', 'total_discount','payment_status','payment_method','order_status']
     def create(self, validated_data):
         order_items=validated_data.pop('order_items')
         payment=validated_data.pop('payment')
@@ -125,3 +129,9 @@ class OrderSerializer(serializers.ModelSerializer):
         for order_item in order_items:
             OrderItem.objects.create(order=order, **order_item)
         return order
+class WishlistSerializer(serializers.ModelSerializer):
+    Product = ProductSerializer(read_only=True)
+    Product_id = serializers.PrimaryKeyRelatedField(queryset=Products.objects.all(), write_only=True, source='Product')
+    class Meta:
+        model = Wishlist
+        fields = ['id', 'user','Product_id','Product']
