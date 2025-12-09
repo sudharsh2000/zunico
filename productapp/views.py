@@ -10,6 +10,7 @@ from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,15 +24,18 @@ from productapp.Serializers import ProductSerializer, ProductCategorySerializer,
 from productapp.models import Products, Productcategory, productimage, CartItem, Cart, Address, Order, OrderItem, \
     Payment, Wishlist
 
-
+class ProductPagination(PageNumberPagination):
+    page_size = 12
+    page_size_query_param = 'page_size'
+    page_query_param = 'page'
+    max_page_size = 10
 # Create your views here.
 class products(viewsets.ModelViewSet):
-
-
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter,OrderingFilter]
     filterset_fields = ['id', 'name','category','slug','price','description']
+    pagination_class = ProductPagination
 
 
 
@@ -46,7 +50,7 @@ class productcategories(viewsets.ModelViewSet):
 class ProductImages(viewsets.ModelViewSet):
     queryset = productimage.objects.all()
 class CartViewset(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+
     serializer_class = CartSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user']
