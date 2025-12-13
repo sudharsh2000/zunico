@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -63,6 +63,15 @@ class CartViewset(viewsets.ModelViewSet):
             .annotate(latest_item_added=Max('items__updated_at'))
             .distinct()
         )
+    @action(detail=False, methods=['delete'])
+    def clear(self, request):
+        user_id=request.GET.get ('user')
+        print(user_id)
+        if user_id is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        Cart.objects.filter(user=user_id).delete()
+        return Response(status=status.HTTP_200_OK)
+
 
 class CartitemsViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -82,6 +91,7 @@ class OrderItemViewset(viewsets.ModelViewSet):
     filterset_fields = ['id', 'Product_id', 'quantity']
 
 class OrderViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
