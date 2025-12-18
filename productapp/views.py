@@ -36,21 +36,16 @@ class products(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter,OrderingFilter]
     filterset_fields = ['id', 'name','category','slug','price','description']
     pagination_class = ProductPagination
-
-
-
     search_fields = ['name','description','price','category__name']
     ordering_fields = ['name','price','updated_at']
     ordering = ['-updated_at']
 class productcategories(viewsets.ModelViewSet):
-
-
     queryset = Productcategory.objects.all()
     serializer_class = ProductCategorySerializer
 class ProductImages(viewsets.ModelViewSet):
     queryset = productimage.objects.all()
 class CartViewset(viewsets.ModelViewSet):
-
+    permission_classes = [IsAuthenticated]
     serializer_class = CartSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user']
@@ -75,10 +70,11 @@ class CartViewset(viewsets.ModelViewSet):
 
 class CartitemsViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
 class AddressViewset(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+   
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
