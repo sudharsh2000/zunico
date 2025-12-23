@@ -87,7 +87,7 @@ class OrderItemViewset(viewsets.ModelViewSet):
     filterset_fields = ['id', 'Product_id', 'quantity']
 
 class OrderViewset(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -167,9 +167,12 @@ class DeleteDraftOrder(APIView):
         user = request.GET.get("user")
         status = request.GET.get("order_status")
         print(user,status)
-        Order.objects.filter(user=user, order_status=status).delete()
+        order= Order.objects.filter(user=user, order_status=status)
+        if order is not None:
+            order.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
-        return Response({"msg": "Draft order deleted"})
+        return Response(staus=status.HTTP_400_BAD_REQUEST)
 class WishlistViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Wishlist.objects.all()

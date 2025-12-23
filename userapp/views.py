@@ -32,6 +32,7 @@ def create_admin(req):
          return HttpResponse("Superuser already exists!")
 # Create your views here.
 class UsersViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend,SearchFilter,OrderingFilter]
@@ -54,18 +55,15 @@ class LoginView(APIView):
         password = request.data.get('password')
         role = request.data.get('superuser')
         role=str(role).lower() in ['true','1','yes']
-        print('username',username,role)
-        print('password',password,role)
+
         user=authenticate(username=username, password=password)
-        print('user',user,role)
+
         if user is None:
             return Response({'message': 'Invalid username or password.'}, status=401)
         if user.is_superuser!=role:
             return Response({'message': 'Invalid username or password.'}, status=401)
         refresh=RefreshToken.for_user(user)
-        refresh['username']=user.username
-        refresh['superuser']=user.is_superuser
-        print('refresh-tok',refresh)
+
         response=Response({'access_token': str(refresh.access_token),'message': 'Successfully logged in.'})
 
         response.set_cookie(
@@ -82,15 +80,22 @@ class LoginView(APIView):
 class RefreshTokenview(TokenRefreshView):
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get('refresh')
-        print('refresh-tok',request.COOKIES)
-        print('refresh', refresh_token)
+
 
         if  refresh_token is None:
             return Response({'message': 'No refresh token'}, status=401)
         try:
-                resfreshtok = RefreshToken(refresh_token)
+                refreshtok = RefreshToken(refresh_token)
+                user=User.objects.get(id=refreshtok['user_id'])
+                uservalues={
+                    'userid':user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'is_superuser': user.is_superuser,
+                    'mobile': user.mobile,
+                }
 
-                response = Response({'access_token': str(resfreshtok.access_token)})
+                response = Response({'access_token': str(refreshtok.access_token),'user': uservalues})
                 return response
         except TokenError as e:
                 return Response({'message': 'Token error.'}, status=401)
