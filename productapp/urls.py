@@ -21,7 +21,7 @@ from rest_framework import routers
 
 from productapp.Serializers import WishlistSerializer
 from productapp.views import productimage, products, productcategories, CartViewset, CartitemsViewset, AddressViewset, \
-    OrderViewset, OrderItemViewset, VerifyPayment, DeleteDraftOrder,WishlistViewset
+    OrderViewset, OrderItemViewset, VerifyPayment, DeleteDraftOrder,WishlistViewset,NotificationViewSet
 
 from zunico_django import settings
 
@@ -34,7 +34,7 @@ router.register('addAdress',AddressViewset ,basename='addAdress')
 router.register('orders',OrderViewset ,basename='orders')
 router.register('orderitems',OrderItemViewset ,basename='orderitems')
 router.register('wishlist',WishlistViewset ,basename='wishlist')
-
+router.register('notification',NotificationViewSet ,basename='notification')
 urlpatterns = [
 
 

@@ -63,18 +63,24 @@ class LoginView(APIView):
         if user.is_superuser!=role:
             return Response({'message': 'Invalid username or password.'}, status=401)
         refresh=RefreshToken.for_user(user)
+        user = User.objects.get(id=refresh['user_id'])
+        uservalues = {
+            'userid': user.id,
+            'username': user.username,
+            'email': user.email,
+            'is_superuser': user.is_superuser,
+            'mobile': user.mobile,
+        }
 
-        response=Response({'access_token': str(refresh.access_token),'message': 'Successfully logged in.'})
+        response=Response({'access_token': str(refresh.access_token),'user':uservalues,'message': 'Successfully logged in.'})
 
         response.set_cookie(
             key='refresh', value=str(refresh),
             samesite='None',
             httponly=False,
             secure=True,
-
             max_age=7*24*60*60
-
-        )
+         )
 
         return response
 class RefreshTokenview(TokenRefreshView):

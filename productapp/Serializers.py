@@ -2,7 +2,7 @@ from django.db.models.aggregates import Sum
 from rest_framework import serializers
 
 from productapp.models import Products, Productcategory, productimage, Cart, CartItem, Address, OrderItem, Payment, \
-    Order, Wishlist
+    Order, Wishlist, Notification
 from userapp.Serializers import UserSerializer
 from userapp.models import User
 
@@ -28,7 +28,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
         return product
 class ProductCategorySerializer(serializers.ModelSerializer):
-
+    image=serializers.ImageField(required=False)
     class Meta:
         model = Productcategory
         fields = '__all__'
@@ -135,3 +135,8 @@ class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
         fields = ['id', 'user','Product_id','Product']
+class NotificationSerializer(serializers.ModelSerializer):
+    user=serializers.HiddenField(default=serializers.CurrentUserDefault())
+    class Meta:
+        model = Notification
+        fields = ['user','title','message','is_read']

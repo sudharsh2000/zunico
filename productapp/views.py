@@ -20,9 +20,10 @@ from zunico_django import settings
 
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 from productapp.Serializers import ProductSerializer, ProductCategorySerializer, CartItemSerializer, CartSerializer, \
-    AddressSerializer, OrderSerializer, OrderItemsSerializer, WishlistSerializer
+    AddressSerializer, OrderSerializer, OrderItemsSerializer, WishlistSerializer, NotificationSerializer
 from productapp.models import Products, Productcategory, productimage, CartItem, Cart, Address, Order, OrderItem, \
-    Payment, Wishlist
+    Payment, Wishlist, Notification
+
 
 class ProductPagination(PageNumberPagination):
     page_size = 12
@@ -171,7 +172,6 @@ class DeleteDraftOrder(APIView):
         if order is not None:
             order.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-
         return Response(staus=status.HTTP_400_BAD_REQUEST)
 class WishlistViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -179,3 +179,16 @@ class WishlistViewset(viewsets.ModelViewSet):
     serializer_class = WishlistSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['id', 'user','Product_id',]
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user)
+
+@action(detail=True, methods=['post'])
+def mark_read(self, request, pk=None):
+    notification = self.get_object()
+    notification.is_read = True
+    notification.save()
+    return Response({"status": "read"})
