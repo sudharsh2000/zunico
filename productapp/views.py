@@ -87,6 +87,7 @@ class OrderItemViewset(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['id', 'Product_id', 'quantity']
 
+
 class OrderViewset(viewsets.ModelViewSet):
 
 
@@ -94,6 +95,8 @@ class OrderViewset(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user','order_status']
+    ordering_fields = ['user', 'created_at']
+    ordering = ['-created_at']
 
 
     def create(self, request, *args, **kwargs):

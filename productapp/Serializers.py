@@ -136,7 +136,7 @@ class WishlistSerializer(serializers.ModelSerializer):
         model = Wishlist
         fields = ['id', 'user','Product_id','Product']
 class NotificationSerializer(serializers.ModelSerializer):
-    user=serializers.HiddenField(default=serializers.CurrentUserDefault())
+    user_id=serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True, source='user')
     class Meta:
         model = Notification
-        fields = ['user','title','message','is_read']
+        fields = ['user_id','title','message','is_read','created_at']
