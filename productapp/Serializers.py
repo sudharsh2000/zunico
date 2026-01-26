@@ -2,7 +2,7 @@ from django.db.models.aggregates import Sum
 from rest_framework import serializers
 
 from productapp.models import Products, Productcategory, productimage, Cart, CartItem, Address, OrderItem, Payment, \
-    Order, Wishlist, Notification
+    Order, Wishlist, Notification, Subcategory, ProductBrand
 from userapp.Serializers import UserSerializer
 from userapp.models import User
 
@@ -15,7 +15,7 @@ class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True,read_only=True)
     class Meta:
         model = Products
-        fields = ['id','name','category','price','description','cost_price','discount','stock', 'main_image', 'images']
+        fields = ['id','name','category','subcategory','brand','price','description','cost_price','discount','stock', 'main_image', 'images']
 
     def create(self, validated_data):
         request = self.context.get('request')  # get request context
@@ -27,6 +27,16 @@ class ProductSerializer(serializers.ModelSerializer):
             productimage.objects.create(name=product, image=img)
 
         return product
+class ProductSubcategorySerializer(serializers.ModelSerializer):
+    image=serializers.ImageField(required=False)
+    class Meta:
+        model = Subcategory
+        fields = '__all__'
+class ProductBrandSerializer(serializers.ModelSerializer):
+    image=serializers.ImageField(required=False)
+    class Meta:
+        model = ProductBrand
+        fields = '__all__'
 class ProductCategorySerializer(serializers.ModelSerializer):
     image=serializers.ImageField(required=False)
     class Meta:

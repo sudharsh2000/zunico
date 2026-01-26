@@ -20,9 +20,10 @@ from zunico_django import settings
 
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 from productapp.Serializers import ProductSerializer, ProductCategorySerializer, CartItemSerializer, CartSerializer, \
-    AddressSerializer, OrderSerializer, OrderItemsSerializer, WishlistSerializer, NotificationSerializer
+    AddressSerializer, OrderSerializer, OrderItemsSerializer, WishlistSerializer, NotificationSerializer, \
+    ProductSubcategorySerializer, ProductBrandSerializer
 from productapp.models import Products, Productcategory, productimage, CartItem, Cart, Address, Order, OrderItem, \
-    Payment, Wishlist, Notification
+    Payment, Wishlist, Notification, Subcategory, ProductBrand
 
 
 class ProductPagination(PageNumberPagination):
@@ -45,6 +46,12 @@ class products(viewsets.ModelViewSet):
 class productcategories(viewsets.ModelViewSet):
     queryset = Productcategory.objects.all()
     serializer_class = ProductCategorySerializer
+class ProductSubcategories(viewsets.ModelViewSet):
+    queryset = Subcategory.objects.all()
+    serializer_class = ProductSubcategorySerializer
+class ProductBrands(viewsets.ModelViewSet):
+    queryset = ProductBrand.objects.all()
+    serializer_class = ProductBrandSerializer
 class ProductImages(viewsets.ModelViewSet):
     queryset = productimage.objects.all()
 class CartViewset(viewsets.ModelViewSet):

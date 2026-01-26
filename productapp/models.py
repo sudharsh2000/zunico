@@ -20,10 +20,37 @@ class Productcategory(models.Model):
             if not self.slug:
                 self.slug=slugify(self.name)
             return super().save(*args, **kwargs)
+class Subcategory(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True,blank=True,null=True)
+    image=models.ImageField(upload_to='subcategories/', null=True, blank=True)
+    category=models.ForeignKey(Productcategory, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug=slugify(self.name)
+        super().save(*args, **kwargs)
+class ProductBrand(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True,blank=True,null=True)
+    def __str__(self):
+        return self.name
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug=slugify(self.name)
+
+
 
 class Products(models.Model):
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Productcategory, on_delete=models.CASCADE)
+    subcategory = models.ForeignKey(Subcategory, on_delete=models.SET_NULL,
+        null=True,
+        blank=True)
+    brand = models.ForeignKey(ProductBrand,on_delete=models.SET_NULL,
+        null=True,
+        blank=True)
     slug = models.SlugField(max_length=100, unique=True,null=True,blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
