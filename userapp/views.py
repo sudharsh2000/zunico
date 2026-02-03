@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
@@ -32,12 +33,16 @@ def create_admin(req):
          return HttpResponse("Superuser already exists!")
 # Create your views here.
 class UsersViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_backends = [DjangoFilterBackend,SearchFilter,OrderingFilter]
-    filterset_fields = ['username','email','id']
-    search_fields = ['username','email']
+    def get_queryset(self):
+        queryset = User.objects.all()
+        if self.request.user.is_superuser or self.request.user.is_staff:
+            return queryset
+        else:
+            print( User.objects.filter(id=self.request.user.id))
+            return User.objects.filter(id=self.request.user.id)
 class IsMyAAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_superuser and request.user.is_authenticated
